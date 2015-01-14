@@ -2,10 +2,10 @@
     require_once('src/BtagAPI.class.php');
 
     // create BtagAPI class instance
-	$btag = new BtagApi('AuthID', 'Access Key');
+    $btag = new BtagApi('AuthID', 'Access Key');
 
     // make request for all tags
-	$results = $btag->send("tags", []);
+    $results = $btag->send("tags", []);
 
     // print list of tags
     echo "Total Tags: " . sizeOf($results) . "<br><hr><br>";

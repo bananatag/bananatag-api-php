@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * Bananatag API PHP Library
  *
@@ -178,9 +178,9 @@ class BtagApi
         if (floor($info['http_code'] / 100) >= 4) {
             throw new RequestException($result["error"] . ", " . $result["message"], $result["statusCode"]);
         }
-		
-		return $result;
-	}
+
+        return $result;
+    }
 
     /**
      * This method can be used to sanitize data before it hits the API
@@ -220,14 +220,14 @@ class BtagApi
      * @param $date
      * @throws RequestException
      */
-	private function validateDate($date) {
-		if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date)) {
-			return true;
-		}
-		else {
-			throw new RequestException("Error with provided parameters: Date string must be in format yyyy-mm-dd.", 400);
-		}
-	}
+    private function validateDate($date) {
+        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date)) {
+            return true;
+        }
+        else {
+            throw new RequestException("Error with provided parameters: Date string must be in format yyyy-mm-dd.", 400);
+        }
+    }
 
     /**
      * @method log
@@ -259,7 +259,7 @@ class BtagApi
      */
     private function getMethod($endpoint) {
         switch($endpoint) {
-        	case "": return "PUT";
+            case "": return "PUT";
             default: return "GET";
         }
     }
