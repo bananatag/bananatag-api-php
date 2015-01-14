@@ -1,11 +1,11 @@
 # Bananatag API - PHP Library
-The Bananatag PHP client is used in conjunction with the Bananatag API which allows you to access your Bananatag data from your own PHP applications. 
+The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*currently in alpha, available on request only*). The Bananatag REST API allows users access to all data associated with their account and sub-accounts. 
 
 #####Requires
  * PHP 5.1.2+ 
  * CURL 7.30.0+.
 
-### Example Usage
+#### Example Usage
 ```php
 
 <?php
@@ -36,12 +36,14 @@ The Bananatag PHP client is used in conjunction with the Bananatag API which all
         echo "<br><br><hr><br>";
     }
 ```
+### Request Limit
+The API is limited to 1 request a second.
 
 ###API Authentication:</h4>
 
 To authenticate a request you must include an authorization header including your auth id and request signiture in base64 encoding. To create the request signature you must first create a data string containing all request parameters. Then using your secret access key provided on sign up, calculate the HMAC of the data string using the HMAC-SHA1 algorithm.
 
-##### Authentication flow
+#### Authentication flow
 
 Desired Request: api/v1/tags?start=2013-10-20&end=2013-11-30
 
