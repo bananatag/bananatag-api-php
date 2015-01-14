@@ -1,0 +1,15 @@
+{
+    "name": "bananatag/bt-external-api-phpLib",
+    "description": "The Bananatag PHP client is used in conjunction with the Bananatag API which allows you to access your Bananatag data from your own PHP applications.",
+    "authors": [
+		{
+			"name":"Bananatag Systems",
+			"email":"eric@bananatag.com"
+		}
+	],
+	"version":1.0.0,
+	"require": {
+        "php": ">=5.1.2",
+        "curl/curl": ">=7.30.0"
+    }
+}
