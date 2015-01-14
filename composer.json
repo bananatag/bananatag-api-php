@@ -1,5 +1,5 @@
 {
-    "name": "bananatag/bt-external-api-phpLib",
+    "name": "bananatag/bananatag-api-php",
     "description": "The Bananatag API PHP Library is used in conjunction Bananatag's REST API (currently in alpha, available on request only). The Bananatag REST API allows users access to all data associated with their account and sub-accounts.",
     "authors": [
 		{
