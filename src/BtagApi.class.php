@@ -147,7 +147,8 @@ class BtagApi
 
         curl_setopt($this->ch, CURLOPT_URL, $url);
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($this->ch, CURLOPT_HTTPHEADER, array('athorization: ' . base64_encode($this->auth_id . ":" . $sig)));
+        curl_setopt($this->ch, CURLOPT_HTTPHEADER, array('authorization: ' . base64_encode($this->auth_id . ":" . $sig)));
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
 
         if ($this->debug) {
             $start = microtime(true);
