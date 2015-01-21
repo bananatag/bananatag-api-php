@@ -48,7 +48,7 @@ class BtagApi
      * @var string $base_url
      * @access private
      */
-    private $base_url = "http://api.bananatag.com/";
+    private $base_url = "https://api.bananatag.com/";
 
     /**
      * Specifies whether debugging is enabled
