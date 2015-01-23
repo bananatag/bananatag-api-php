@@ -13,7 +13,7 @@ The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*curr
     // create BtagAPI class instance
 	$btag = new BtagApi('AuthID', 'Access Key');
     // make request for all tags
-	$results = $btag->send("tags", []);
+	$results = $btag->send("tags", ['start':'2015-01-01', 'end':'2015-02-01']);
     // print list of tags
     echo "Total Tags: " . sizeOf($results) . "<br><hr><br>";
     foreach ($results as $tag) {
@@ -38,25 +38,6 @@ The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*curr
 ```
 ### Request Limit
 The API is limited to 1 request a second.
-
-###API Authentication:</h4>
-
-To authenticate a request you must include an authorization header including your auth id and request signiture in base64 encoding. To create the request signature you must first create a data string containing all request parameters. Then using your secret access key provided on sign up, calculate the HMAC of the data string using the HMAC-SHA1 algorithm.
-
-#### Authentication flow
-
-Desired Request: api/v1/tags?start=2013-10-20&end=2013-11-30
-
-**Step 1**: Create Data String  
-* Data String = start=2013-10-20&end=2013-11-30
-
-**Step 2**: Generate Signature using HMAC-SHA1 Algorithm
-* Using 'hex' encoding
-* Using secret access key as the HMAC key
-* Using generated data string as HMAC message
-
-**Step 3**: Authorization Header:
-* authorization: base64('your AuthID' : 'generated HMAC')  
 
 ###API Endpoints  
 To view a list of available endpoints please visit the REST API section of your Bananatag account found under the Resources tab.
