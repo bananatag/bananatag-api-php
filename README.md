@@ -12,7 +12,7 @@ The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*curr
     require_once('src/BtagAPI.class.php');
     // create BtagAPI class instance
 	$btag = new BtagApi('AuthID', 'Access Key');
-    // make request for all tags
+    // make request for all tags in date range
 	$results = $btag->send("tags", ['start'=>'2015-01-01', 'end'=>'2015-02-01']);
     // print list of tags
     echo "Total Tags: " . sizeOf($results) . "<br><hr><br>";
