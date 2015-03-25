@@ -38,6 +38,3 @@ The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*curr
 ```
 ### Request Limit
 The API is limited to 1 request per second.
-
-###API Endpoints  
-To view a list of available endpoints please visit the REST API section of your Bananatag account found under the Resources tab.
