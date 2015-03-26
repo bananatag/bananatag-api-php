@@ -209,11 +209,6 @@ class BtagApi
             }
         }
 
-        // check if aggregateData is either true or false
-        if (isset($data['aggregateData']) && $data['aggregateData'] != "true" && $data['aggregateData'] != "false") {
-            throw new RequestException("Error with provided parameters: aggregateData must either be 'true' or 'false'.", 400);
-        }
-
         return;
     }
 
@@ -224,7 +219,7 @@ class BtagApi
      * @throws RequestException
      */
     private function validateDate($date) {
-        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date)) {
+        if (preg_match("/^\d{4}-\d{2}-\d{2}$/",$date)) {
             return true;
         }
         else {
