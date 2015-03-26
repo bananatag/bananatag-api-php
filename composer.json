@@ -8,7 +8,7 @@
         }
     ],
     "version":"1.0.0",
-    "psr-0" : {
-        "Bananatag\\Api" : "src"
+    "autoload": {
+        "psr-4": {"Bananatag\\": "src/Bananatag"}
     }
 }

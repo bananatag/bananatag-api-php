@@ -6,7 +6,7 @@
  * @version 1.0.0
  */
 
-namespace Bananatag\Api;
+namespace Bananatag;
 
 abstract class BTException extends \Exception
 {

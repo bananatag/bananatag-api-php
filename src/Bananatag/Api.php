@@ -23,16 +23,16 @@
  * @version 1.0.0
  **/
 
-namespace Bananatag\Api;
+namespace Bananatag;
 
-require_once "bt-exception.php";
+require_once "BTException.php";
 class CurlException extends BTException{}
 class RequestException extends BTException{}
 
 /**
  * Class BtagApi
  */
-class BtagApi
+class Api
 {
     /**
      * @var $auth_id
