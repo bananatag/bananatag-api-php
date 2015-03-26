@@ -23,6 +23,8 @@
  * @version 1.0.0
  **/
 
+namespace Bananatag\Api;
+
 require_once "bt-exception.php";
 class CurlException extends BTException{}
 class RequestException extends BTException{}
@@ -116,7 +118,7 @@ class BtagApi
     /**
      * @param string $endpoint
      * @param array $params
-     * @return stdClass $result
+     * @return \stdClass $result
      */
     public function send($endpoint, $params) {
         $this->checkData($params);
@@ -139,7 +141,7 @@ class BtagApi
      * @param array $data
      * @throws CurlException
      * @throws RequestException
-     * @return stdClass $result
+     * @return \stdClass $result
      */
     private function makeRequest($url, $method = 'GET', $sig, $data = array()) {
         // set url based on request type
