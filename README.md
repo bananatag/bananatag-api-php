@@ -1,21 +1,36 @@
-# Bananatag API - PHP Library
-The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*currently in alpha, available on request only*). The Bananatag REST API allows users access to all data associated with their account and sub-accounts. 
+Bananatag API - PHP Library
+===========================
+The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*currently in alpha, available on request only*). The Bananatag REST API allows users access to all data associated with their account and sub-accounts.
 
-#####Requires
- * PHP 5.1.2+ 
+### Installation
+
+#### Composer
+```bash
+$ composer require bananatag/bananatag-api-php
+```
+Not using composer, [get composer here.](https://getcomposer.org/)
+
+### Requires
+ * PHP 5.3+ 
  * CURL 7.30.0+.
 
-#### Example Usage
+### Usage
+
+#### Get All Tags
 ```php
 
 <?php
-    require_once('src/BtagAPI.class.php');
-    // create BtagAPI class instance
-	$btag = new BtagApi('AuthID', 'Access Key');
-    // make request for all tags in date range
+    use Bananatag\Api;
+    
+    // Create Api class instance
+    $btag = new Api('AuthID', 'Access Key');
+	
+    // Make request for all tags in date range
 	$results = $btag->send("tags", ['start'=>'2015-01-01', 'end'=>'2015-02-01']);
-    // print list of tags
+	
+    // Print list of tags
     echo "Total Tags: " . sizeOf($results) . "<br><hr><br>";
+    
     foreach ($results as $tag) {
         $recipients = [];
         foreach ($tag['recipients'] as $recipient) {
@@ -38,3 +53,6 @@ The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*curr
 ```
 ### Request Limit
 The API is limited to 1 request per second.
+
+### Request Limit
+Licensed under the MIT License.
