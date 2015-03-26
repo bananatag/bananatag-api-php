@@ -1,5 +1,5 @@
 <?php
-    require_once('src/BtagAPI.class.php');
+    require_once('src/BtagApi.class.php');
 
     // create BtagAPI class instance
     $btag = new BtagApi('AuthID', 'Access Key');
