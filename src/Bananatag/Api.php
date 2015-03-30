@@ -4,23 +4,11 @@
  *
  * Requirements:
  *   1. PHP CURL library
- *   2. PHP >= 5
- *
- * How to use:
- *   1. create BtagApi instance using your AuthID and Access Key:
- *      $btag = new BtagApi('your AuthID', 'your Access Key');
- *   2. create your request params object -
- *      Example:
- *      $params = ['start'=>'2013-01-01', 'end'=>'2014-03-30', 'rtn'=>'json'];
- *   3. Send API request:
- *      $btag->send($endpoint, $params);
- *
- * Other commands:
- *    1. Generate request signature:
- *       $btag->generateSignature($params);
+ *   2. PHP >= 5.3
  *
  * @author Bananatag Systems <eric@bananatag.com>
- * @version 1.0.0
+ * @version 0.1.0
+ * @license MIT
  **/
 
 namespace Bananatag;
@@ -35,22 +23,22 @@ class RequestException extends BTException{}
 class Api
 {
     /**
-     * @var $auth_id
+     * @var $authId
      * @access private
      */
-    private $auth_id;
+    private $authId;
 
     /**
-     * @var string $access_key
+     * @var string $accessKey
      * @access private
      */
-    private $access_key;
+    private $accessKey;
 
     /**
-     * @var string $base_url
+     * @var string $baseUrl
      * @access private
      */
-    private $base_url = "https://api.bananatag.com/";
+    private $baseUrl = "https://api.bananatag.com/";
 
     /**
      * Specifies whether debugging is enabled
@@ -75,13 +63,20 @@ class Api
     private $ch;
 
     /**
+     * @var integer $requests
+     * @access private
+     */
+    private $requests = array();
+
+    /**
      * @param $id
      * @param $key
      * @param array $options
      * @throws CurlException
      * @throws RequestException
      */
-    public function __construct($id=null, $key=null, $options = array()) {
+    public function __construct($id=null, $key=null, $options=array())
+    {
         if (!function_exists('curl_init') || !function_exists('curl_setopt')) {
             throw new CurlException("The Bananatag-PHP API library requires cURL.", 400);
         }
@@ -90,8 +85,8 @@ class Api
             throw new RequestException("You must provide both an authID and access key.", 401);
         }
 
-        $this->auth_id	   = $id;
-        $this->access_key  = $key;
+        $this->authId	   = $id;
+        $this->accessKey  = $key;
         $this->ch          = curl_init();
 
         if (isset($options['debug'])) {
@@ -111,7 +106,8 @@ class Api
     /**
      * Close cURL on destruct
      */
-    public function __destruct() {
+    public function __destruct()
+    {
         curl_close($this->ch);
     }
 
@@ -120,14 +116,20 @@ class Api
      * @param array $params
      * @return \stdClass $result
      */
-    public function send($endpoint, $params) {
+    public function send($endpoint, $params)
+    {
         $this->checkData($params);
 
-        $url    = $this->base_url . $endpoint;
-        $sig    = $this->generateSignature($params);
-        $method = $this->getMethod($endpoint);
+        $post = $this->updateSession($endpoint, $params);
 
-        return $this->makeRequest($url, $method, $sig, $params);
+        if ($post) {
+            $sig    = $this->generateSignature($post);
+            $method = $this->getMethod($endpoint);
+
+            return $this->makeRequest($endpoint, $method, $sig, $params, $post);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -135,26 +137,34 @@ class Api
      * as an object.
      *
      * @method makeRequest
-     * @param string $url
+     * @param string $endPoint
      * @param string $method
      * @param string $sig
-     * @param array $data
+     * @param array $params
+     * @param $post
      * @throws CurlException
      * @throws RequestException
      * @return \stdClass $result
      */
-    private function makeRequest($url, $method = 'GET', $sig, $data = array()) {
+    private function makeRequest($endPoint, $method = 'GET', $sig, $params = array(), $post)
+    {
+        $url = $this->baseUrl . $endPoint;
+
         // set url based on request type
-        ($method === 'GET') ? ($url = $url . '?' . http_build_query($data)) : curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query($data));
+        if ($method === 'GET') {
+            $url = $url . '?' . http_build_query($post);
+        } else {
+            curl_setopt($this->ch, CURLOPT_POSTFIELDS, http_build_query($post));
+        }
 
         curl_setopt($this->ch, CURLOPT_URL, $url);
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, $method);
-        curl_setopt($this->ch, CURLOPT_HTTPHEADER, array('authorization: ' . base64_encode($this->auth_id . ":" . $sig)));
+        curl_setopt($this->ch, CURLOPT_HTTPHEADER, array('authorization: ' . base64_encode($this->authId . ":" . $sig)));
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
 
         if ($this->debug) {
             $start = microtime(true);
-            $this->log('Call to ' . $method . $url . ': ' . http_build_query($data));
+            $this->log('Call to ' . $method . $url . ': ' . http_build_query($post));
             $curl_buffer = fopen('php://memory', 'w+');
             curl_setopt($this->ch, CURLOPT_STDERR, $curl_buffer);
         }
@@ -176,6 +186,11 @@ class Api
         }
 
         $result = json_decode($output, true);
+
+        if (isset($result->paging))
+        {
+            $this->updateSession($endPoint, $params, true);
+        }
 
         // If the status code is 4XX or above, parse node error and throw new custom exception
         if (floor($info['http_code'] / 100) >= 4) {
@@ -218,6 +233,54 @@ class Api
     }
 
     /**
+     * @method updateSession
+     * @param $endPoint
+     * @param $params
+     * @param bool $update
+     * @return bool|array
+     */
+    private function updateSession($endPoint, $params, $update = false)
+    {
+        $session = md5($endPoint . http_build_query($params));
+
+        if (!isset($params['rtn']))
+        {
+            $params['rtn'] = 'json';
+        }
+
+        if (isset($this->requests[$session]))
+        {
+            $this->requests[$session] = array(
+                'params' => $params,
+                'next'   => 0,
+                'prev'   => 0,
+                'total'  => 1,
+                'url'    => $this->baseUrl
+            );
+        } elseif ($update) {
+            if (isset($update->cursors->total))
+            {
+                $this->requests[$session]['total'] = $update->cursors->total;
+            }
+
+            $this->requests[$session]['params'] = $params;
+            $this->requests[$session]['next'] = $update->cursors->next;
+            $this->requests[$session]['prev'] = $update->cursors->prev;
+
+            return false;
+        }
+
+        // If the cursor is equal to
+        if ($this->requests[$session]['next'] === $this->requests[$session]['total']) {
+            return false;
+        }
+
+        $params['cursor'] = $this->requests[$session]['next'];
+
+        return $params;
+    }
+
+    /**
      * This method can be used to validate data strings are in the format yyyy-mm-dd
      * @method validateDate
      * @param $date
@@ -249,7 +312,7 @@ class Api
      */
     private function generateSignature($params)
     {
-        $signature = hash_hmac("sha1", urldecode(http_build_query($params)), $this->access_key);
+        $signature = hash_hmac("sha1", urldecode(http_build_query($params)), $this->accessKey);
         return $signature;
     }
 
