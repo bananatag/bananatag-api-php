@@ -77,8 +77,7 @@ $results = $btag->request("tags", []);
 // Page 3, etc
 $results = $btag->request("tags", []);
 ```
-
-The recursive example above could be written:
+Or you can manually choose a page:
 ```php
 <?php
 // Page 1
