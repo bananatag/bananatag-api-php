@@ -5,8 +5,10 @@ The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*curr
 ### Installation
 
 #### Composer
-```bash
-$ composer require bananatag/bananatag-api-php
+```json
+"require": {
+    "bananatag/bananatag-api-php": "dev-master"
+}
 ```
 *Not using composer yet, [get composer here.](https://getcomposer.org/)*
 
