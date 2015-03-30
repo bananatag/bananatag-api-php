@@ -7,7 +7,7 @@
  *   2. PHP >= 5.3
  *
  * @author Bananatag Systems <eric@bananatag.com>
- * @version 0.1.0
+ * @version v0.1
  * @license MIT
  **/
 
