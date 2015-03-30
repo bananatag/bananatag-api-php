@@ -116,7 +116,7 @@ class Api
      * @param array $params
      * @return \stdClass $result
      */
-    public function send($endpoint, $params)
+    public function request($endpoint, $params)
     {
         $this->checkData($params);
 
@@ -273,6 +273,18 @@ class Api
         // If the cursor is equal to
         if ($this->requests[$session]['next'] === $this->requests[$session]['total']) {
             return false;
+        }
+
+        // Manual override of cursor
+        if (isset($params['page']))
+        {
+            if (is_numeric($params['page']))
+            {
+                $params['cursor'] = $params['page'] * 250;
+            }
+
+            unset($params['page']);
+
         }
 
         $params['cursor'] = $this->requests[$session]['next'];

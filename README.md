@@ -26,7 +26,7 @@ $ composer require bananatag/bananatag-api-php
     $btag = new Api('AuthID', 'Access Key');
 	
     // Make request for all tags in date range
-	$results = $btag->send("tags", ['start'=>'2015-01-01', 'end'=>'2015-02-01']);
+	$results = $btag->request("tags", ['start'=>'2015-01-01', 'end'=>'2015-02-01']);
 	
     // Print list of tags
     echo "Total Tags: " . sizeOf($results) . "<br><hr><br>";
@@ -54,7 +54,7 @@ Each time you make a request with the same parameters, the library automatically
 $btag = new Api('AuthID', 'Access Key');
 
 function getTags(&$btag) {
-    $results = $btag->send("tags", []);
+    $results = $btag->request("tags", []);
 
     echo $results['paging']['cursors']['next'];
 
@@ -71,11 +71,22 @@ The recursive example above could be written:
 ```php
 <?php
 // Page 1
-$results = $btag->send("tags", []);
+$results = $btag->request("tags", []);
 // Page 2
-$results = $btag->send("tags", []);
+$results = $btag->request("tags", []);
 // Page 3, etc
-$results = $btag->send("tags", []);
+$results = $btag->request("tags", []);
+```
+
+The recursive example above could be written:
+```php
+<?php
+// Page 1
+$results = $btag->request("tags", ['page'=>1]);
+// Page 3
+$results = $btag->request("tags", ['page'=>3]);
+// Page 2
+$results = $btag->request("tags", ['page'=>2]);
 ```
 
 ### Request Limit
