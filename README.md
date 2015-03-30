@@ -91,5 +91,5 @@ $results = $btag->request("tags", ['page'=>2]);
 ### Request Limit
 The API is limited to 1 request per second.
 
-### Request Limit
+### License
 Licensed under the MIT License.
