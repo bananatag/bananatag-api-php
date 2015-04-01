@@ -7,7 +7,7 @@
  *   2. PHP >= 5.3
  *
  * @author Bananatag Systems <eric@bananatag.com>
- * @version v0.1
+ * @version 0.1.0
  * @license MIT
  **/
 
@@ -248,7 +248,7 @@ class Api
             $params['rtn'] = 'json';
         }
 
-        if (isset($this->requests[$session]))
+        if (!isset($this->requests[$session]))
         {
             $this->requests[$session] = array(
                 'params' => $params,
