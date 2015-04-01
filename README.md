@@ -31,22 +31,10 @@ The Bananatag API PHP Library is used in conjunction Bananatag's REST API (*curr
 	$results = $btag->request("tags", ['start'=>'2015-01-01', 'end'=>'2015-02-01']);
 	
     // Print list of tags
-    echo "Total Tags: " . sizeOf($results) . "<br><hr><br>";
+    echo "Total Tags: " . count($results['data']) . "<br><hr><br>";
     
-    foreach ($results['data'] as $tag) {
-        echo "Tag ID: " . $tag['id'];
-        echo "<br>Subject: " . $tag['subject'];
-        echo "<br>Total Opens: " . $tag['data']['totalOpens'];
-        echo "<br>Unique Opens: " . $tag['data']['uniqueOpens'];
-        echo "<br>Desktop Opens: " . $tag['data']['desktopOpens'];
-        echo "<br>Mobile Opens: " . $tag['data']['mobileOpens'];
-        echo "<br>Total Clicks: " . $tag['data']['totalClicks'];
-        echo "<br>Unique Clicks: " . $tag['data']['uniqueClicks'];
-        echo "<br>Desktop Clicks: " . $tag['data']['desktopClicks'];
-        echo "<br>Mobile Clicks: " . $tag['data']['mobileClicks'];
-        echo "<br>Date Sent: " . $tag['dateSent'];
-        echo "<br><br><hr><br>";
-    }
+    print_r($results['data']);
+    
 ```
 
 #### Pagination
