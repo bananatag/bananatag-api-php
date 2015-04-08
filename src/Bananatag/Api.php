@@ -207,7 +207,8 @@ class Api
      * @param $data
      * @throws RequestException
      */
-    private function checkData($data) {
+    private function checkData($data)
+    {
         // check date strings are in correct format
         if (isset($data['start'])) {
             $this->validateDate($data['start']);
@@ -296,9 +297,11 @@ class Api
      * This method can be used to validate data strings are in the format yyyy-mm-dd
      * @method validateDate
      * @param $date
+     * @return boolean
      * @throws RequestException
      */
-    private function validateDate($date) {
+    private function validateDate($date)
+    {
         if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$date)) {
             return true;
         }
@@ -311,7 +314,8 @@ class Api
      * @method log
      * @param $msg
      */
-    private function log($msg) {
+    private function log($msg)
+    {
         if($this->debug) {
             error_log($msg);
         }
@@ -335,10 +339,90 @@ class Api
      * @param string $endpoint
      * @return string
      */
-    private function getMethod($endpoint) {
+    private function getMethod($endpoint)
+    {
         switch($endpoint) {
             case "": return "PUT";
             default: return "GET";
+        }
+    }
+
+    public function buildMessage($params)
+    {
+        if (!isset($params['from']))
+        {
+            throw new RequestException('The From header must be specified', 400);
+        }
+        if (!isset($params['to']))
+        {
+            throw new RequestException('The To header must be specified', 400);
+        }
+        if (!isset($params['html']))
+        {
+            throw new RequestException('The HTML body must be specified', 400);
+        }
+
+        $message = Swift_Message::newInstance()
+            ->setFrom($params['from'])
+            ->setTo($params['to'])
+            ->setBody($params['html'], 'text/html');
+
+        if (isset($params['subject']))
+        {
+            $message->setSubject($params['subject']);
+        }
+        if (isset($params['cc']))
+        {
+            $message->setCc($params['cc']);
+        }
+        if (isset($params['text']))
+        {
+            $message->addPart($params['text'], 'text/plain');
+        }
+        if (isset($params['subject']))
+        {
+            $message->setSubject($params['subject']);
+        }
+        if (isset($params['headers']))
+        {
+            $headers = $message->getHeaders();
+            foreach ($params['headers'] as $header)
+            {
+                $headers->addTextHeader($header['name'], $header['value']);
+            }
+        }
+
+        if (isset($params['attachments']))
+        {
+            foreach ($params['attachments'] as $attachment)
+            {
+                if (!isset($attachment['filePath']))
+                {
+                    throw new RequestException('The attachment file path must be specified', 400);
+                }
+                $swift_attachment = Swift_Attachment::fromPath($attachment['filePath']);
+
+                $filename = isset($attachment['filename']) ? isset($attachment['filename']) : end(explode("/", $attachment['filePath']));
+                $swift_attachment->setFilename($filename);
+
+                if (isset($attachment['content-type']))
+                {
+                    $swift_attachment->setContentType($attachment['content-type']);
+                }
+
+                if (isset($attachment['content-disposition']))
+                {
+                    $swift_attachment->setDisposition($attachment['content-disposition']);
+                }
+                else
+                {
+                    $swift_attachment->setDisposition('attachment');
+                }
+                $disposition = $swift_attachment->getHeaders()->get('Content-Disposition');
+                $disposition->setParameter('filename', $filename);
+
+                $message->attach($swift_attachment);
+            }
         }
     }
 }

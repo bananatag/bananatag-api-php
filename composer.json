@@ -4,7 +4,8 @@
     "homepage": "https://github.com/bananatag/bananatag-api-php",
     "keywords": ["Bananatag", "api"],
     "require": {
-        "php": ">=5.3.0"
+        "php": ">=5.3.0",
+        "swiftmailer/swiftmailer": "5.4.0"
     },
     "type": "library",
     "license": "MIT",
