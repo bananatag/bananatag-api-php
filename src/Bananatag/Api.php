@@ -424,5 +424,7 @@ class Api
                 $message->attach($swift_attachment);
             }
         }
+
+        return base64_encode($message->toString());
     }
 }
