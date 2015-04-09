@@ -17,6 +17,9 @@ require_once "BTException.php";
 class CurlException extends BTException{}
 class RequestException extends BTException{}
 
+use Swift_Message;
+use Swift_Attachment;
+
 /**
  * Class BtagApi
  */
@@ -120,7 +123,7 @@ class Api
     {
         $this->checkData($params);
 
-        $post = $this->updateSession($endpoint, $params);
+        $post = $endpoint == "tags/send" ? $params : $this->updateSession($endpoint, $params);
 
         if ($post) {
             $sig    = $this->generateSignature($post);
@@ -244,11 +247,6 @@ class Api
     {
         $session = md5($endPoint . http_build_query($params));
 
-        if (!isset($params['rtn']))
-        {
-            $params['rtn'] = 'json';
-        }
-
         if (!isset($this->requests[$session]))
         {
             $this->requests[$session] = array(
@@ -342,7 +340,7 @@ class Api
     private function getMethod($endpoint)
     {
         switch($endpoint) {
-            case "": return "PUT";
+            case "tags/send": return "POST";
             default: return "GET";
         }
     }
@@ -396,13 +394,20 @@ class Api
         {
             foreach ($params['attachments'] as $attachment)
             {
-                if (!isset($attachment['filePath']))
+                if (isset($attachment['filePath']))
                 {
-                    throw new RequestException('The attachment file path must be specified', 400);
+                    $swift_attachment = Swift_Attachment::fromPath($attachment['filePath']);
                 }
-                $swift_attachment = Swift_Attachment::fromPath($attachment['filePath']);
+                else
+                {
+                    $swift_attachment = Swift_Attachment::newInstance($attachment['contents']);
+                    if (!isset($attachment['filename']))
+                    {
+                        throw new RequestException('Attachment filename must be specified', 400);
+                    }
+                }
 
-                $filename = isset($attachment['filename']) ? isset($attachment['filename']) : end(explode("/", $attachment['filePath']));
+                $filename = isset($attachment['filename']) ? $attachment['filename'] : end(explode("/", $attachment['filePath']));
                 $swift_attachment->setFilename($filename);
 
                 if (isset($attachment['content-type']))
