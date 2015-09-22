@@ -122,7 +122,7 @@ class Api
     public function request($endpoint, $params)
     {
         $this->checkData($params);
-        $post = $this->updateSession($endpoint, $params);
+        $post = ($endpoint == "tags/send") ? $params : $this->updateSession($endpoint, $params);
 
         if ($post) {
             $sig    = $this->generateSignature($post);
