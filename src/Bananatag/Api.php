@@ -88,7 +88,7 @@ class Api
             throw new RequestException("You must provide both an authID and access key.", 401);
         }
 
-        $this->authId	   = $id;
+        $this->authId      = $id;
         $this->accessKey  = $key;
         $this->ch          = curl_init();
 
@@ -122,8 +122,7 @@ class Api
     public function request($endpoint, $params)
     {
         $this->checkData($params);
-
-        $post = $endpoint == "tags/send" ? $params : $this->updateSession($endpoint, $params);
+        $post = $this->updateSession($endpoint, $params);
 
         if ($post) {
             $sig    = $this->generateSignature($post);
@@ -190,9 +189,9 @@ class Api
 
         $result = json_decode($output, true);
 
-        if (isset($result->paging))
+        if (isset($result['paging']))
         {
-            $this->updateSession($endPoint, $params, true);
+            $this->updateSession($endPoint, $params, $result['paging']);
         }
 
         // If the status code is 4XX or above, parse node error and throw new custom exception
@@ -257,14 +256,14 @@ class Api
                 'url'    => $this->baseUrl
             );
         } elseif ($update) {
-            if (isset($update->cursors->total))
+            if (isset($update['cursors']['total']))
             {
-                $this->requests[$session]['total'] = $update->cursors->total;
+                $this->requests[$session]['total'] = $update['cursors']['total'];
             }
 
             $this->requests[$session]['params'] = $params;
-            $this->requests[$session]['next'] = $update->cursors->next;
-            $this->requests[$session]['prev'] = $update->cursors->prev;
+            $this->requests[$session]['next'] = $update['cursors']['next'];
+            $this->requests[$session]['prev'] = $update['cursors']['previous'];
 
             return false;
         }
@@ -284,9 +283,9 @@ class Api
 
             unset($params['page']);
 
+        } else {
+            $params['cursor'] = $this->requests[$session]['next'];
         }
-
-        $params['cursor'] = $this->requests[$session]['next'];
 
         return $params;
     }
