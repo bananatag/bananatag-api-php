@@ -196,7 +196,11 @@ class Api
 
         // If the status code is 4XX or above, parse node error and throw new custom exception
         if (floor($info['http_code'] / 100) >= 4) {
-            throw new RequestException($result["error"] . ", " . $result["message"], $result["statusCode"]);
+            if ($result !== null) {
+                throw new RequestException($result["error"] . ", " . $result["message"], $result["statusCode"]);
+            } else {
+                throw new RequestException('Service Unavailable - Please contact Bananatag support.', $info["http_code"]);
+            }
         }
 
         return $result;
